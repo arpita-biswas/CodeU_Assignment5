@@ -31,11 +31,11 @@ public class UnknownLanguage {
         
         if(dictionary.size() == 1){
             String word = dictionary.get(0);
-            ArrayList<Character> sortedCharacters = new ArrayList<Character>();
+            HashSet<Character> characters = new HashSet<Character>();
             for(int i=0; i<word.length(); i++){
-               sortedCharacters.add(word.charAt(i));
+               characters.add(word.charAt(i));
             }
-            return sortedCharacters;
+            return new ArrayList<Character>(characters);
         }
         
         DAG dag = new DAG();
@@ -54,11 +54,11 @@ public class UnknownLanguage {
                 if(isComparable){
                     dag.addNode(currentChar);
                     dag.addNode(nextChar);
-                }
-                //if all characters at indices k < j have been same for the two consecutive words,
-                //then, if the characters at j differ, add an edge currentCHar to nextChar
-                //      if not, just add the (identical) char in the DAG               
+                }                             
                 else{
+                    //if all characters at indices k < j have been same for the two consecutive words,
+                    //then, if the characters at j differ, add an edge currentCHar to nextChar
+                    //      if not, just add the (identical) char in the DAG  
                     if(currentChar != nextChar){
                         dag.addDirectedEdge(currentChar, nextChar);
                         isComparable = true;
@@ -113,6 +113,7 @@ public class UnknownLanguage {
         TestNullDictionary(); // Null dictionary
         TestEmptyDictionary(); // Empty dictionary
         TestOneWordDictionary(); // When only one word is there in the dictionary
+        TestOneWordRepeatedCharacterDictionary(); // When only one word is there in the dictionary with repeated characters, example "ARA"
         TestSingleCharacterWordsDictionary(); //When all words are of size 1 (onr character only)
         TestDifferentLengthWordsDictionary(); //When the words are of different lengths
         TestNonComparableCharactersDictionary(); //When the adjacent words are not comparable (no same character appears in both the words)
@@ -133,6 +134,22 @@ public class UnknownLanguage {
     public static void TestOneWordDictionary(){
         ArrayList<String> dictionary = new ArrayList<String>();
         dictionary.add("AR");
+        ArrayList<Character> expectedResult1 = new ArrayList<Character>();
+        expectedResult1.add('A');
+        expectedResult1.add('R');
+        ArrayList<Character> expectedResult2 = new ArrayList<Character>();
+        expectedResult2.add('R');
+        expectedResult2.add('A');
+        HashSet<ArrayList<Character>> expectedResults = new HashSet<ArrayList<Character>>();
+        expectedResults.add(expectedResult1);
+        expectedResults.add(expectedResult2);
+        assertTrue(expectedResults.contains(findAlphabetList(dictionary)));
+    }
+    
+    @Test
+    public static void TestOneWordRepeatedCharacterDictionary(){
+        ArrayList<String> dictionary = new ArrayList<String>();
+        dictionary.add("ARA");
         ArrayList<Character> expectedResult1 = new ArrayList<Character>();
         expectedResult1.add('A');
         expectedResult1.add('R');
